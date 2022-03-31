@@ -1,5 +1,4 @@
 package user;
-
 import java.util.Scanner;
 
 public class Customer extends User{
@@ -12,7 +11,7 @@ public class Customer extends User{
     private String phoneNumber;
 
     public Customer(){
-
+        this.firstName = "";
     }
 
     public Customer(int customerId, String firstName, String lastName, String CNP, String email, String phoneNumber) {
@@ -23,6 +22,8 @@ public class Customer extends User{
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
+
+
 
     public void readDetails(Scanner in){
         System.out.println("First name: ");
