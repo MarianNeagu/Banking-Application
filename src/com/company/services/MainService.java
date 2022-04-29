@@ -1,6 +1,7 @@
 package com.company.services;
 
 import com.company.cards.Card;
+import com.company.cards.PremiumCard;
 import com.company.cards.StandardCard;
 import com.company.user.Admin;
 import com.company.user.Customer;
@@ -13,7 +14,7 @@ import java.util.*;
 public class MainService {
 
     private static final List<String> loginCommands = Arrays.asList("1. Create Account", "2. Login", "3. Exit");
-    private static final List<String> customerCommands = Arrays.asList("1. View account details", "2. Deposit cash", "3. Withdraw", "4. New Card", "5. New Deposit", "6. Close account", "7. Logout", "8. Exit");
+    private static final List<String> customerCommands = Arrays.asList("1. View account details", "2. Deposit cash", "3. Withdraw", "4. New Card", "5. New Deposit", "6. Logout", "7. Exit");
     private static final List<String> adminCommands = Arrays.asList( "1. View customer details", "2. Delete account", "3. Delete Card", "4. Exit");
 
     private static MainService instance;
@@ -66,15 +67,64 @@ public class MainService {
         else adminMenu((Admin) loggedUser);
     }
 
-    public void depositCash(int ammount){
+    public void depositCash(double ammount, Customer loggedCustomer)
+    {
+        boolean hasCard = false;
+
+        for (Card card : cards)
+        {
+            if (card.getUserUniqueId() == loggedCustomer.getUniqueId())
+            {
+                hasCard = true;
+                break;
+            }
+        }
+        if (!hasCard)
+        {
+            System.out.println("You don't have any cards in which to deposit money!\n");
+            customerMenu(loggedCustomer);
+            return;
+        }
+        int cardIndex = 1;
+        System.out.println("Select the card in which to deposit:");
+        for (Card card : cards)
+        {
+            if (card.getUserUniqueId() == loggedCustomer.getUniqueId())
+            {
+                System.out.println(cardIndex + ". Card number: " + card.getCardNumber());
+                System.out.println("Current amount: " + card.getAmount() + "\n");
+                cardIndex++;
+            }
+        }
+
+        Scanner in = new Scanner(System.in);
+        int command = Integer.parseInt(in.nextLine());
+        while (command < 1 || command >= cardIndex)
+        {
+            System.out.println("Enter a valid number!");
+            command = Integer.parseInt(in.nextLine());
+        }
+
+        cardIndex = 1;
+        for (Card card : cards) {
+            if (card.getUserUniqueId() == loggedCustomer.getUniqueId()) {
+                if (cardIndex == command) {
+                    // increment the amount
+                    card.setAmount(card.getAmount() + ammount);
+                    break;
+                } else cardIndex++;
+            }
+        }
+
+        customerMenu(loggedCustomer);
+    }
+
+    public void withdraw(double amount, Customer loggedCustomer){
 
     }
 
-    public void withdraw(double amount){
-
-    }
-
-    public void createStandardCard(long uniqueId) throws ParseException {
+    public void createStandardCard(long uniqueId) throws ParseException
+    {
         Random rand = new Random();
         int rand_month = rand.nextInt(1,13); // generate random month for exp date
 
@@ -92,7 +142,7 @@ public class MainService {
             cardNumber.append(rand_number);
         }
 
-        System.out.println("Ammount to deposit ($): ");
+        System.out.println("Amount to deposit ($): ");
         amount = Double.parseDouble(in.nextLine());
         System.out.println("Withdrawal fee (%): ");
         withdrawFee = Double.parseDouble(in.nextLine());
@@ -101,13 +151,34 @@ public class MainService {
         StandardCard newStandardCard = this.cardService.createStandardCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, withdrawFee);
         cards.add(newStandardCard);
     }
-    public void createPremiumdCard(long uniqueId)
+    public void createPremiumCard(long uniqueId) throws ParseException
     {
+        Random rand = new Random();
+        int rand_month = rand.nextInt(1,13); // generate random month for exp date
 
+        Scanner in = new Scanner(System.in);
+        StringBuilder cardNumber = new StringBuilder();
+        Date expirationDate = new Date(2025, rand_month, 1);
+
+        double amount, cashBack;
+
+        for(int i = 0; i < 16; i++)
+        {
+            int rand_number = rand.nextInt(9);
+            cardNumber.append(rand_number);
+        }
+
+        System.out.println("Amount to deposit ($): ");
+        amount = Double.parseDouble(in.nextLine());
+        System.out.println("Cashback  (%): ");
+        cashBack = Double.parseDouble(in.nextLine());
+
+        PremiumCard newPremiumCard = this.cardService.createPremiumCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, cashBack);
+        cards.add(newPremiumCard);
     }
 
     public void createCard(Customer customer) throws ParseException {
-        // choose what type of accout to create:
+        // choose what type of card to create:
         Scanner in = new Scanner(System.in);
 
         System.out.println("Type of card (1 - standard, 2 - premium): ");
@@ -121,7 +192,7 @@ public class MainService {
             }
             else if (Objects.equals(command, "2"))
             {
-                createPremiumdCard(customer.getUniqueId());
+                createPremiumCard(customer.getUniqueId());
                 break;
             }
             else
@@ -261,20 +332,19 @@ public class MainService {
                     case "2" -> {
                         System.out.println("Enter the amount to deposit: ");
                         Scanner in_amount = new Scanner(System.in);
-                        int amount = Integer.parseInt(in_amount.nextLine());
-                        depositCash(amount);
+                        double amount = Double.parseDouble(in_amount.nextLine());
+                        depositCash(amount, loggedCustomer);
                     }
                     case "3" -> {
                         System.out.println("Enter the amount to withdraw: ");
                         Scanner in_amount = new Scanner(System.in);
                         double amount = Double.parseDouble(in_amount.nextLine());
-                        withdraw(amount);
+                        withdraw(amount, loggedCustomer);
                     }
                     case "4" -> createCard(loggedCustomer);
                     case "5" -> createDeposit();
-                    case "6" -> closeAccount();
-                    case "7" -> loginMenu();
-                    case "8" -> System.exit(0);
+                    case "6" -> loginMenu();
+                    case "7" -> System.exit(0);
                 }
             }
             catch (Exception e)
@@ -296,7 +366,7 @@ public class MainService {
 
         boolean exit = false;
 
-        System.out.println("~Genesis Bank~\n");
+        System.out.println("\n~Genesis Bank~\n");
 
         for (String loginCommand : loginCommands)
         {
