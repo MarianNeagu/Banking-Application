@@ -21,6 +21,7 @@ public class MainService {
     private static MainService instance = null;
     UserService userService = UserService.getInstance();
     CardService cardService = CardService.getInstance();
+    AuditService auditService = AuditService.getInstance();
 
     public static MainService getInstance(){
         if(instance == null){
@@ -38,7 +39,7 @@ public class MainService {
     }
 
 
-    public void login(){
+    public void login() throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         // call the appropriate menu by user type after logged in
 
@@ -58,20 +59,21 @@ public class MainService {
             password = in.nextLine();
             loggedUser = userService.getUserByEmailAndPassword(email, password);
         }
+        auditService.writeActionInCsv("user logged in");
         if(Objects.equals(loggedUser.getTypeOfUser(), "customer"))
             customerMenu((Customer) loggedUser);
         else adminMenu((Admin) loggedUser);
     }
 
-    public void depositCash(double amount, Customer loggedCustomer)
-    {
+    public void depositCash(double amount, Customer loggedCustomer) throws FileNotFoundException {
         cardService.depositCash(amount, loggedCustomer);
+        auditService.writeActionInCsv("deposit cash");
         // go back to customer menu
         customerMenu(loggedCustomer);
     }
 
-    public void withdraw(double amount, Customer loggedCustomer){
-
+    public void withdraw(double amount, Customer loggedCustomer) throws FileNotFoundException {
+        auditService.writeActionInCsv("withdraw cash");
     }
 
     public void createCard(Customer customer) throws ParseException, FileNotFoundException {
@@ -99,7 +101,7 @@ public class MainService {
                 command = in.nextLine();
             }
         }
-
+        auditService.writeActionInCsv("created card");
         // after the card creation, return to the customer menu
         customerMenu(customer);
     }
@@ -141,20 +143,19 @@ public class MainService {
                 command = in.nextLine();
             }
         }
-
+        auditService.writeActionInCsv("created account");
         // after the account creation, return to the login panel
         loginMenu();
     }
 
-    public void viewCustomerDetails(Customer customer)
-    {
+    public void viewCustomerDetails(Customer customer) throws FileNotFoundException {
         System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
         System.out.println("Identified by CNP: " + customer.getCnp());
         System.out.println("Email address: " + customer.getEmail());
         System.out.println("Phone number: " + customer.getPhoneNumber());
 
         cardService.viewCardDetails(customer);
-
+        auditService.writeActionInCsv("customer show details");
         customerMenu(customer);
     }
 
