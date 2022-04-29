@@ -6,6 +6,7 @@ import com.company.cards.StandardCard;
 import com.company.user.Admin;
 import com.company.user.Customer;
 
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -16,6 +17,7 @@ public class CardService {
     private final List<Card> cards = new ArrayList<>();
 
     CsvReaderService csvReaderService = CsvReaderService.getInstance();
+    CsvWriterService csvWriterService = CsvWriterService.getInstance();
 
     public static CardService getInstance(){
         if(instance == null){
@@ -108,8 +110,7 @@ public class CardService {
     }
 
 
-    public void createStandardCard_(long uniqueId) throws ParseException
-    {
+    public void createStandardCard_(long uniqueId) throws ParseException, FileNotFoundException {
         Random rand = new Random();
         int rand_month = rand.nextInt(1,13); // generate random month for exp date
 
@@ -135,9 +136,11 @@ public class CardService {
 
         StandardCard newStandardCard = createStandardCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, withdrawFee);
         cards.add(newStandardCard);
+
+        // add to csv
+        csvWriterService.writeStandardCardInCsv(newStandardCard);
     }
-    public void createPremiumCard_(long uniqueId) throws ParseException
-    {
+    public void createPremiumCard_(long uniqueId) throws ParseException, FileNotFoundException {
         Random rand = new Random();
         int rand_month = rand.nextInt(1,13); // generate random month for exp date
 
@@ -160,6 +163,9 @@ public class CardService {
 
         PremiumCard newPremiumCard = createPremiumCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, cashBack);
         cards.add(newPremiumCard);
+
+        // add to csv
+        csvWriterService.writePremiumCardInCsv(newPremiumCard);
     }
 
     public void viewCardDetails(Customer customer)

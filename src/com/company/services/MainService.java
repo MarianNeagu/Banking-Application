@@ -7,6 +7,7 @@ import com.company.user.Admin;
 import com.company.user.Customer;
 import com.company.user.User;
 
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -73,7 +74,7 @@ public class MainService {
 
     }
 
-    public void createCard(Customer customer) throws ParseException {
+    public void createCard(Customer customer) throws ParseException, FileNotFoundException {
         // choose what type of card to create:
         Scanner in = new Scanner(System.in);
 
@@ -115,7 +116,7 @@ public class MainService {
 
     }
     
-    public void createAccount() throws ParseException {
+    public void createAccount() throws ParseException, FileNotFoundException {
         // choose what type of accout to create:
         Scanner in = new Scanner(System.in);
 

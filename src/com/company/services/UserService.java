@@ -5,6 +5,7 @@ import com.company.user.Customer;
 import com.company.user.Admin;
 import com.company.user.User;
 
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -20,6 +21,7 @@ public class UserService {
     }
 
     CsvReaderService csvReaderService = CsvReaderService.getInstance();
+    CsvWriterService csvWriterService = CsvWriterService.getInstance();
 
     public static UserService getInstance(){
         if(instance == null){
@@ -61,7 +63,7 @@ public class UserService {
         return null;
     }
 
-    public void createCustomerAccount() throws ParseException {
+    public void createCustomerAccount() throws ParseException, FileNotFoundException {
         Scanner in = new Scanner(System.in);
         String firstName, lastName, email, password, cnp, phoneNumber;
 
@@ -80,9 +82,12 @@ public class UserService {
 
         Customer newCustomer = createCustomer(firstName, lastName, email, password, cnp, phoneNumber);
         users.add(newCustomer);
+
+        // add to csv
+        csvWriterService.writeCustomerInCsv(newCustomer);
     }
 
-    public void createAdminAccount() throws ParseException {
+    public void createAdminAccount() throws ParseException, FileNotFoundException {
         Scanner in = new Scanner(System.in);
         String firstName, lastName, email, password, cnp, phoneNumber;
 
@@ -98,6 +103,9 @@ public class UserService {
 
         Admin newAdmin = createAdmin(firstName, lastName, email, password);
         users.add(newAdmin);
+
+        // add to csv
+        csvWriterService.writeAdminInCsv(newAdmin);
     }
 
 
