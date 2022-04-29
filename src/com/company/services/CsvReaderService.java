@@ -32,9 +32,72 @@ public class CsvReaderService {
             //returns a Boolean value
             {
                 String[] customer = line.split(splitBy);
-                //use comma as separator
-//                System.out.println("First Name: " + customer[1] + ", Last Name: " + customer[2] + ", Email: " + customer[3] + ", Password: " + customer[4] + ", CNP: " + customer[5]  + ", Phone Number: " + customer[6] + "]");
                 stringList.add(customer);
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return stringList;
+    }
+
+    public List<String[]> readAdminsFromCsv()
+    {
+        List<String[]> stringList = new ArrayList<>();
+        String line = "";
+        String splitBy = ",";
+        try {
+            //parsing a CSV file into BufferedReader class constructor
+            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\admins.csv"));
+            br.readLine(); // read header
+            while ((line = br.readLine()) != null)
+            //returns a Boolean value
+            {
+                String[] admin = line.split(splitBy);
+                stringList.add(admin);
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return stringList;
+    }
+    public List<String[]> readStandardCardsFromCsv()
+    {
+        List<String[]> stringList = new ArrayList<>();
+        String line = "";
+        String splitBy = ",";
+        try {
+            //parsing a CSV file into BufferedReader class constructor
+            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\standardcards.csv"));
+            br.readLine(); // read header
+            while ((line = br.readLine()) != null)
+            //returns a Boolean value
+            {
+                String[] card = line.split(splitBy);
+                stringList.add(card);
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return stringList;
+    }
+
+    public List<String[]> readPremiumCardsFromCsv()
+    {
+        List<String[]> stringList = new ArrayList<>();
+        String line = "";
+        String splitBy = ",";
+        try {
+            //parsing a CSV file into BufferedReader class constructor
+            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\premiumcards.csv"));
+            br.readLine(); // read header
+            while ((line = br.readLine()) != null)
+            //returns a Boolean value
+            {
+                String[] card = line.split(splitBy);
+                stringList.add(card);
             }
         }
         catch(IOException e) {

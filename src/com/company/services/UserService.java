@@ -37,11 +37,16 @@ public class UserService {
     }
 
     public void readUsersFromCsv() throws ParseException {
-        List<String[]> listString = csvReaderService.readCustomersFromCsv();
-        for (String[] strings : listString) {
+        List<String[]> customersList = csvReaderService.readCustomersFromCsv();
+        for (String[] strings : customersList) {
             Customer newCustomer = createCustomer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
             users.add(newCustomer);
+        }
 
+        List<String[]> adminList = csvReaderService.readAdminsFromCsv();
+        for (String[] strings : adminList) {
+            Admin newAdmin = createAdmin(strings[0], strings[1], strings[2], strings[3]);
+            users.add(newAdmin);
         }
     }
 

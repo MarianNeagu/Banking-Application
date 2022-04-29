@@ -3,6 +3,7 @@ package com.company.services;
 import com.company.cards.Card;
 import com.company.cards.PremiumCard;
 import com.company.cards.StandardCard;
+import com.company.user.Admin;
 import com.company.user.Customer;
 
 import java.text.ParseException;
@@ -13,6 +14,8 @@ public class CardService {
     private static CardService instance;
 
     private final List<Card> cards = new ArrayList<>();
+
+    CsvReaderService csvReaderService = CsvReaderService.getInstance();
 
     public static CardService getInstance(){
         if(instance == null){
@@ -30,6 +33,28 @@ public class CardService {
     public PremiumCard createPremiumCard(long userUniqueId, String cardNumber, Date expirationDate, double ammount, double cashBack) throws ParseException
     {
         return new PremiumCard(userUniqueId, cardNumber, expirationDate, ammount, cashBack);
+    }
+
+    public void readCardsFromCsv() throws ParseException {
+        List<String[]> standardCardList = csvReaderService.readStandardCardsFromCsv();
+        for (String[] strings : standardCardList) {
+
+            String sDate = strings[2];
+            Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+
+            StandardCard newStandardCard = createStandardCard(Long.parseLong(strings[0]), strings[1], date, Double.parseDouble(strings[3]), Double.parseDouble(strings[4]));
+            cards.add(newStandardCard);
+        }
+
+        List<String[]> premiumCardList = csvReaderService.readPremiumCardsFromCsv();
+        for (String[] strings : premiumCardList) {
+
+            String sDate = strings[2];
+            Date date = new SimpleDateFormat("dd/MM/yyyy").parse(sDate);
+
+            StandardCard newStandardCard = createStandardCard(Long.parseLong(strings[0]), strings[1], date, Double.parseDouble(strings[3]), Double.parseDouble(strings[4]));
+            cards.add(newStandardCard);
+        }
     }
 
 

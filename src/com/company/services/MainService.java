@@ -30,6 +30,7 @@ public class MainService {
 
     public void readFromCsv() throws ParseException {
         userService.readUsersFromCsv();
+        cardService.readCardsFromCsv();
 
         // after reading go to log in menu
         loginMenu();
