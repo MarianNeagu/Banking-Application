@@ -45,7 +45,7 @@ public class CsvWriterService {
                 "," +
                 customer.getCnp() +
                 "," +
-                customer.getPassword();
+                customer.getPassword() + "\n";
     }
 
     // Admin
@@ -67,7 +67,7 @@ public class CsvWriterService {
                 "," +
                 admin.getEmail() +
                 "," +
-                admin.getPassword();
+                admin.getPassword() + "\n";
     }
 
     public void writeStandardCardInCsv(StandardCard standardCard) throws FileNotFoundException
@@ -91,7 +91,7 @@ public class CsvWriterService {
                 "," +
                 standardCard.getAmount() +
                 "," +
-                standardCard.getWithdrawFee();
+                standardCard.getWithdrawFee() + "\n";
     }
 
 
@@ -117,6 +117,6 @@ public class CsvWriterService {
                 "," +
                 premiumCard.getAmount() +
                 "," +
-                premiumCard.getCashBack();
+                premiumCard.getCashBack() + "\n";
     }
 }
