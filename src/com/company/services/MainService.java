@@ -17,13 +17,9 @@ public class MainService {
     private static final List<String> customerCommands = Arrays.asList("1. View account details", "2. Deposit cash", "3. Withdraw", "4. New Card", "5. New Deposit", "6. Logout", "7. Exit");
     private static final List<String> adminCommands = Arrays.asList( "1. View customer details", "2. Delete account", "3. Delete Card", "4. Exit");
 
-    private static MainService instance;
-    private final UserService userService = new UserService();
-    private final CardService cardService = new CardService();
-
-    private final List<User> users = new ArrayList<>();
-    private final List<Card> cards = new ArrayList<>();
-
+    private static MainService instance = null;
+    UserService userService = UserService.getInstance();
+    CardService cardService = CardService.getInstance();
 
     public static MainService getInstance(){
         if(instance == null){
@@ -31,16 +27,6 @@ public class MainService {
         }
         return instance;
     }
-
-    private User getUserByEmailAndPassword(String email, String password)
-    {
-        for (User user : users) {
-            if (Objects.equals(user.getEmail(), email) && Objects.equals(user.getPassword(), password))
-                return user;
-        }
-        return null;
-    }
-
 
     public void login(){
         Scanner in = new Scanner(System.in);
@@ -51,7 +37,7 @@ public class MainService {
         System.out.println("Enter password: ");
         String password = in.nextLine();
 
-        User loggedUser = getUserByEmailAndPassword(email, password);
+        User loggedUser = userService.getUserByEmailAndPassword(email, password);
 
         while(loggedUser == null)
         {
@@ -60,121 +46,22 @@ public class MainService {
             email = in.nextLine();
             System.out.println("Enter password: ");
             password = in.nextLine();
-            loggedUser = getUserByEmailAndPassword(email, password);
+            loggedUser = userService.getUserByEmailAndPassword(email, password);
         }
         if(Objects.equals(loggedUser.getTypeOfUser(), "customer"))
             customerMenu((Customer) loggedUser);
         else adminMenu((Admin) loggedUser);
     }
 
-    public void depositCash(double ammount, Customer loggedCustomer)
+    public void depositCash(double amount, Customer loggedCustomer)
     {
-        boolean hasCard = false;
-
-        for (Card card : cards)
-        {
-            if (card.getUserUniqueId() == loggedCustomer.getUniqueId())
-            {
-                hasCard = true;
-                break;
-            }
-        }
-        if (!hasCard)
-        {
-            System.out.println("You don't have any cards in which to deposit money!\n");
-            customerMenu(loggedCustomer);
-            return;
-        }
-        int cardIndex = 1;
-        System.out.println("Select the card in which to deposit:");
-        for (Card card : cards)
-        {
-            if (card.getUserUniqueId() == loggedCustomer.getUniqueId())
-            {
-                System.out.println(cardIndex + ". Card number: " + card.getCardNumber());
-                System.out.println("Current amount: " + card.getAmount() + "\n");
-                cardIndex++;
-            }
-        }
-
-        Scanner in = new Scanner(System.in);
-        int command = Integer.parseInt(in.nextLine());
-        while (command < 1 || command >= cardIndex)
-        {
-            System.out.println("Enter a valid number!");
-            command = Integer.parseInt(in.nextLine());
-        }
-
-        cardIndex = 1;
-        for (Card card : cards) {
-            if (card.getUserUniqueId() == loggedCustomer.getUniqueId()) {
-                if (cardIndex == command) {
-                    // increment the amount
-                    card.setAmount(card.getAmount() + ammount);
-                    break;
-                } else cardIndex++;
-            }
-        }
-
+        cardService.depositCash(amount, loggedCustomer);
+        // go back to customer menu
         customerMenu(loggedCustomer);
     }
 
     public void withdraw(double amount, Customer loggedCustomer){
 
-    }
-
-    public void createStandardCard(long uniqueId) throws ParseException
-    {
-        Random rand = new Random();
-        int rand_month = rand.nextInt(1,13); // generate random month for exp date
-
-
-
-        Scanner in = new Scanner(System.in);
-        StringBuilder cardNumber = new StringBuilder();
-        Date expirationDate = new Date(2025, rand_month, 1);
-
-        double amount, withdrawFee;
-
-        for(int i = 0; i < 16; i++)
-        {
-            int rand_number = rand.nextInt(9);
-            cardNumber.append(rand_number);
-        }
-
-        System.out.println("Amount to deposit ($): ");
-        amount = Double.parseDouble(in.nextLine());
-        System.out.println("Withdrawal fee (%): ");
-        withdrawFee = Double.parseDouble(in.nextLine());
-
-
-        StandardCard newStandardCard = this.cardService.createStandardCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, withdrawFee);
-        cards.add(newStandardCard);
-    }
-    public void createPremiumCard(long uniqueId) throws ParseException
-    {
-        Random rand = new Random();
-        int rand_month = rand.nextInt(1,13); // generate random month for exp date
-
-        Scanner in = new Scanner(System.in);
-        StringBuilder cardNumber = new StringBuilder();
-        Date expirationDate = new Date(2025, rand_month, 1);
-
-        double amount, cashBack;
-
-        for(int i = 0; i < 16; i++)
-        {
-            int rand_number = rand.nextInt(9);
-            cardNumber.append(rand_number);
-        }
-
-        System.out.println("Amount to deposit ($): ");
-        amount = Double.parseDouble(in.nextLine());
-        System.out.println("Cashback  (%): ");
-        cashBack = Double.parseDouble(in.nextLine());
-
-        PremiumCard newPremiumCard = this.cardService.createPremiumCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, cashBack);
-        cards.add(newPremiumCard);
     }
 
     public void createCard(Customer customer) throws ParseException {
@@ -187,12 +74,12 @@ public class MainService {
         {
             if (Objects.equals(command, "1"))
             {
-                createStandardCard(customer.getUniqueId());
+                cardService.createStandardCard_(customer.getUniqueId());
                 break;
             }
             else if (Objects.equals(command, "2"))
             {
-                createPremiumCard(customer.getUniqueId());
+                cardService.createPremiumCard_(customer.getUniqueId());
                 break;
             }
             else
@@ -229,12 +116,12 @@ public class MainService {
         {
             if (Objects.equals(command, "1"))
             {
-                createCustomerAccount();
+                userService.createCustomerAccount();
                 break;
             }
             else if (Objects.equals(command, "2"))
             {
-                createAdminAccount();
+                userService.createAdminAccount();
                 break;
             }
             else
@@ -249,46 +136,6 @@ public class MainService {
         loginMenu();
     }
 
-    public void createAdminAccount() throws ParseException {
-        Scanner in = new Scanner(System.in);
-        String firstName, lastName, email, password, cnp, phoneNumber;
-
-        System.out.println("First name: ");
-        firstName = in.nextLine();
-        System.out.println("Last name: ");
-        lastName = in.nextLine();
-        System.out.println("Email address: ");
-        email = in.nextLine();
-        System.out.println("Password: ");
-        password = in.nextLine();
-
-
-        Admin newAdmin = this.userService.createAdmin(firstName, lastName, email, password);
-        users.add(newAdmin);
-    }
-
-
-    public void createCustomerAccount() throws ParseException {
-        Scanner in = new Scanner(System.in);
-        String firstName, lastName, email, password, cnp, phoneNumber;
-
-        System.out.println("First name: ");
-        firstName = in.nextLine();
-        System.out.println("Last name: ");
-        lastName = in.nextLine();
-        System.out.println("CNP: ");
-        cnp = in.nextLine();
-        System.out.println("Email address: ");
-        email = in.nextLine();
-        System.out.println("Password: ");
-        password = in.nextLine();
-        System.out.println("Phone number: ");
-        phoneNumber = in.nextLine();
-
-        Customer newCustomer = this.userService.createCustomer(firstName, lastName, email, password, cnp, phoneNumber);
-        users.add(newCustomer);
-    }
-
     public void viewCustomerDetails(Customer customer)
     {
         System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
@@ -296,18 +143,8 @@ public class MainService {
         System.out.println("Email address: " + customer.getEmail());
         System.out.println("Phone number: " + customer.getPhoneNumber());
 
-        for (Card card : cards) {
-            if (card.getUserUniqueId() == customer.getUniqueId()) {
-                System.out.println("\nCard details: ");
-                System.out.println("Card number: " + card.getCardNumber());
+        cardService.viewCardDetails(customer);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
-                String formattedDate = formatter.format(card.getExpirationDate());
-
-                System.out.println("Exp. Date: " + formattedDate);
-                System.out.println("Amount on card: " + card.getAmount());
-            }
-        }
         customerMenu(customer);
     }
 
@@ -360,7 +197,6 @@ public class MainService {
 
     }
 
-
     public void loginMenu()
     {
 
@@ -399,6 +235,4 @@ public class MainService {
 
         }
     }
-
-
 }
