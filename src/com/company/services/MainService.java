@@ -28,6 +28,14 @@ public class MainService {
         return instance;
     }
 
+    public void readFromCsv() throws ParseException {
+        userService.readUsersFromCsv();
+
+        // after reading go to log in menu
+        loginMenu();
+    }
+
+
     public void login(){
         Scanner in = new Scanner(System.in);
         // call the appropriate menu by user type after logged in

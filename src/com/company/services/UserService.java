@@ -15,6 +15,11 @@ public class UserService {
     private static UserService instance;
     private final List<User> users = new ArrayList<>();
 
+    public List<User> getUsers() {
+        return users;
+    }
+
+    CsvReaderService csvReaderService = CsvReaderService.getInstance();
 
     public static UserService getInstance(){
         if(instance == null){
@@ -29,6 +34,15 @@ public class UserService {
 
     public Admin createAdmin(String firstName, String lastName, String email, String password) throws ParseException {
         return new Admin(++uniqueId, firstName, lastName, email, password);
+    }
+
+    public void readUsersFromCsv() throws ParseException {
+        List<String[]> listString = csvReaderService.readCustomersFromCsv();
+        for (String[] strings : listString) {
+            Customer newCustomer = createCustomer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
+            users.add(newCustomer);
+
+        }
     }
 
 
