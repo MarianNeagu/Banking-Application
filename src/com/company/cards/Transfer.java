@@ -1,4 +1,4 @@
 package com.company.cards;
 
-public class Transaction {
+public class Transfer {
 }

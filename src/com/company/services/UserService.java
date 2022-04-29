@@ -16,6 +16,10 @@ public class UserService {
     public Customer createCustomer(String firstName, String lastName, String email, String password, String cnp, String phoneNumber) throws ParseException {
         return new Customer(++uniqueId, firstName, lastName, email, password, cnp, phoneNumber);
     }
+
+    public Admin createAdmin(String firstName, String lastName, String email, String password) throws ParseException {
+        return new Admin(++uniqueId, firstName, lastName, email, password);
+    }
 }
 
 

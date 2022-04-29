@@ -1,7 +1,9 @@
 package com.company.services;
 
 import com.company.cards.Card;
+import com.company.user.Admin;
 import com.company.user.Customer;
+import com.company.user.User;
 
 import java.text.ParseException;
 import java.util.*;
@@ -15,8 +17,7 @@ public class MainService {
     private static MainService instance;
     private final UserService userService = new UserService();
 
-    private final List<Customer> customers = new ArrayList<>();
-
+    private final List<User> users = new ArrayList<>();
 
 
     public static MainService getInstance(){
@@ -26,16 +27,39 @@ public class MainService {
         return instance;
     }
 
-    public void login(){
-        // dupa ce dai login se va apela meniul corespunzator tipului de cont
-
-        // call the appropriate menu by user type
-
-//        if()
+    private User getUserByEmailAndPassword(String email, String password)
+    {
+        for (User user : users) {
+            if (Objects.equals(user.getEmail(), email) && Objects.equals(user.getPassword(), password))
+                return user;
+        }
+        return null;
     }
 
-    public void viewAccountDetails(){
 
+    public void login(){
+        Scanner in = new Scanner(System.in);
+        // call the appropriate menu by user type after logged in
+
+        System.out.println("Enter email address: ");
+        String email = in.nextLine();
+        System.out.println("Enter password: ");
+        String password = in.nextLine();
+
+        User loggedUser = getUserByEmailAndPassword(email, password);
+
+        while(loggedUser == null)
+        {
+            System.out.println("Email/Password not found. Try again.");
+            System.out.println("Enter email address: ");
+            email = in.nextLine();
+            System.out.println("Enter password: ");
+            password = in.nextLine();
+            loggedUser = getUserByEmailAndPassword(email, password);
+        }
+        if(Objects.equals(loggedUser.getTypeOfUser(), "customer"))
+            customerMenu((Customer) loggedUser);
+        else adminMenu((Admin) loggedUser);
     }
 
     public void depositCash(int ammount){
@@ -88,9 +112,22 @@ public class MainService {
         loginMenu();
     }
 
-    public void createAdminAccount()
-    {
+    public void createAdminAccount() throws ParseException {
+        Scanner in = new Scanner(System.in);
+        String firstName, lastName, email, password, cnp, phoneNumber;
 
+        System.out.println("First name: ");
+        firstName = in.nextLine();
+        System.out.println("Last name: ");
+        lastName = in.nextLine();
+        System.out.println("Email address: ");
+        email = in.nextLine();
+        System.out.println("Password: ");
+        password = in.nextLine();
+
+
+        Admin newAdmin = this.userService.createAdmin(firstName, lastName, email, password);
+        users.add(newAdmin);
     }
 
 
@@ -112,10 +149,15 @@ public class MainService {
         phoneNumber = in.nextLine();
 
         Customer newCustomer = this.userService.createCustomer(firstName, lastName, email, password, cnp, phoneNumber);
-        customers.add(newCustomer);
+        users.add(newCustomer);
     }
 
-    public void viewCustomerDetails(Customer customer){
+    public void viewCustomerDetails(Customer customer)
+    {
+        System.out.println("Name: " + customer.getFirstName() + " " + customer.getLastName());
+        System.out.println("Identified by CNP: " + customer.getCnp());
+        System.out.println("Email address: " + customer.getEmail());
+        System.out.println("Phone number: " + customer.getPhoneNumber());
     }
 
     public void deleteAccount(Customer customer){
@@ -126,11 +168,11 @@ public class MainService {
 
     }
 
-    public void customerMenu() {
+    public void customerMenu(Customer loggedCustomer) {
 
         boolean exit = false;
 
-        System.out.println("Welcome!\n");
+        System.out.println("Welcome, " + loggedCustomer.getFirstName() + "!\n");
 
         for (String customerCommand : customerCommands) {
             System.out.println(customerCommand);
@@ -144,7 +186,7 @@ public class MainService {
             {
                 switch (command)
                 {
-                    case "1" -> viewAccountDetails();
+                    case "1" -> viewCustomerDetails(loggedCustomer);
                     case "2" -> {
                         System.out.println("Enter the ammount to deposit: ");
                         Scanner in_ammount = new Scanner(System.in);
@@ -171,11 +213,10 @@ public class MainService {
         }
     }
 
-    public void adminMenu()
+    public void adminMenu(Admin loggedUser)
     {
 
     }
-
 
 
     public void loginMenu()
@@ -183,7 +224,7 @@ public class MainService {
 
         boolean exit = false;
 
-        System.out.println("Genesis Bank\n");
+        System.out.println("~Genesis Bank~\n");
 
         for (String loginCommand : loginCommands)
         {
