@@ -184,5 +184,11 @@ public class CardService {
         }
     }
 
+    public void printExpiredCards()
+    {
+        System.out.println("Expired cards:");
+        cards.stream().filter(card -> card.isExpired()).forEach(card -> System.out.println("Card number: " + card.getCardNumber()));
+    }
+
 
 }

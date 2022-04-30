@@ -1,22 +1,19 @@
 package com.company.services;
 
-import com.company.cards.Card;
-import com.company.cards.PremiumCard;
-import com.company.cards.StandardCard;
 import com.company.user.Admin;
 import com.company.user.Customer;
 import com.company.user.User;
 
 import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.*;
 
 public class MainService {
 
     private static final List<String> loginCommands = Arrays.asList("1. Create Account", "2. Login", "3. Exit");
-    private static final List<String> customerCommands = Arrays.asList("1. View account details", "2. Deposit cash", "3. Withdraw", "4. New Card", "5. New Deposit", "6. Logout", "7. Exit");
-    private static final List<String> adminCommands = Arrays.asList( "1. View customer details", "2. Delete account", "3. Delete Card", "4. Exit");
+    private static final List<String> customerCommands = Arrays.asList("1. View account details", "2. Deposit cash", "3. Withdraw (in maintenance)", "4. New Card", "5. New Deposit (in maintenance)", "6. Logout", "7. Exit");
+    private static final List<String> adminCommands = Arrays.asList( "1. View customer details", "2. Delete account (in maintenance)", "3. Delete Card (in maintenance)", "4. Print expired cards", "5. Logout", "6. Exit");
 
     private static MainService instance = null;
     UserService userService = UserService.getInstance();
@@ -114,8 +111,14 @@ public class MainService {
 
     }
 
-    public void closeAccount(){
+    public void deleteAccount(){
 
+    }
+
+    public void printExpiredCards(Admin loggedAdmin) throws FileNotFoundException {
+        cardService.printExpiredCards();
+        auditService.writeActionInCsv("print expired cards");
+        adminMenu(loggedAdmin);
     }
     
     public void createAccount() throws ParseException, FileNotFoundException {
@@ -162,7 +165,7 @@ public class MainService {
     public void customerMenu(Customer loggedCustomer) {
 
 
-        System.out.println("Welcome, " + loggedCustomer.getFirstName() + "!\n");
+        System.out.println("\nWelcome, " + loggedCustomer.getFirstName() + "!\n");
 
         for (String customerCommand : customerCommands) {
             System.out.println(customerCommand);
@@ -203,8 +206,39 @@ public class MainService {
         }
     }
 
-    public void adminMenu(Admin loggedUser)
+    public void adminMenu(Admin loggedAdmin)
     {
+        System.out.println("\nWelcome, " + loggedAdmin.getFirstName() + "!\n");
+        for (String adminCommand : adminCommands) {
+            System.out.println(adminCommand);
+        }
+
+        while(true)
+        {
+            Scanner in = new Scanner(System.in);
+            String command = in.nextLine();
+            try
+            {
+                switch (command)
+                {
+                    case "1" -> {
+                        Customer customer = (Customer) userService.getUsers().get(0); // TEMPORAR
+                        viewCustomerDetails(customer);
+                    }
+                    case "2" -> deleteAccount();
+                    case "3" -> deleteCard();
+                    case "4" -> printExpiredCards(loggedAdmin);
+                    case "5" -> loginMenu();
+                    case "6" -> System.exit(0);
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println(e.toString());
+            }
+
+        }
+
 
     }
 

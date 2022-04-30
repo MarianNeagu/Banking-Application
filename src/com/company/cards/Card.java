@@ -46,4 +46,9 @@ public class Card {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    public boolean isExpired(){
+        Date currentDateAndTime = new Date(System.currentTimeMillis());
+        return currentDateAndTime.compareTo(expirationDate) > 0;
+    }
 }
