@@ -2,6 +2,7 @@ package com.company.repository;
 
 import com.company.cards.StandardCard;
 import com.company.config.DatabaseConfiguration;
+import java.sql.Date;
 
 import java.sql.*;
 
@@ -34,7 +35,7 @@ public class StandardCardsRepositoryUsingStatements {
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertPersonSql)) {
             preparedStatement.setLong(1, standardCard.getUserUniqueId());
             preparedStatement.setString(2, standardCard.getCardNumber());
-            preparedStatement.setDate(3, (Date) standardCard.getExpirationDate());
+            preparedStatement.setDate(3, new java.sql.Date(standardCard.getExpirationDate().getTime()));
             preparedStatement.setDouble(4, standardCard.getAmount());
             preparedStatement.setDouble(5, standardCard.getWithdrawFee());
 
