@@ -21,7 +21,7 @@ public class AuditService
 
     public void writeActionInCsv(String action) throws FileNotFoundException
     {
-        File csvOutputFile = new File("src\\com\\company\\resources\\audit.csv");
+        File csvOutputFile = new File("src\\main\\java\\com\\company\\resources\\audit.csv");
 
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date currentDateAndTime = new Date(System.currentTimeMillis());

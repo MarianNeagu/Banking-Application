@@ -1,5 +1,6 @@
 package com.company.services;
 
+import com.company.repository.StandardCardsRepositoryUsingStatements;
 import com.company.user.Admin;
 import com.company.user.Customer;
 import com.company.user.User;
@@ -20,6 +21,10 @@ public class MainService {
     CardService cardService = CardService.getInstance();
     AuditService auditService = AuditService.getInstance();
 
+
+    StandardCardsRepositoryUsingStatements standardCardsRepositoryUsingStatements = new StandardCardsRepositoryUsingStatements();
+
+
     public static MainService getInstance(){
         if(instance == null){
             instance = new MainService();
@@ -30,6 +35,10 @@ public class MainService {
     public void readFromCsv() throws ParseException {
         userService.readUsersFromCsv();
         cardService.readCardsFromCsv();
+
+
+
+        standardCardsRepositoryUsingStatements.createTable();
 
         // after reading go to log in menu
         loginMenu();

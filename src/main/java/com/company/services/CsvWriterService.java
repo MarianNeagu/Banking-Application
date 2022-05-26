@@ -25,7 +25,7 @@ public class CsvWriterService {
     // Customer
     public void writeCustomerInCsv(Customer customer) throws FileNotFoundException
     {
-        File csvOutputFile = new File("src\\com\\company\\resources\\customers.csv");
+        File csvOutputFile = new File("src\\main\\java\\com\\company\\resources\\customers.csv");
         String formattedCustomer = convertToCsvFormat(customer);
 
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true))) {
@@ -51,7 +51,7 @@ public class CsvWriterService {
     // Admin
     public void writeAdminInCsv(Admin admin) throws FileNotFoundException
     {
-        File csvOutputFile = new File("src\\com\\company\\resources\\admins.csv");
+        File csvOutputFile = new File("src\\main\\java\\com\\company\\resources\\admins.csv");
         String formattedAdmin = convertToCsvFormat(admin);
 
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true))) {
@@ -72,7 +72,7 @@ public class CsvWriterService {
 
     public void writeStandardCardInCsv(StandardCard standardCard) throws FileNotFoundException
     {
-        File csvOutputFile = new File("src\\com\\company\\resources\\standardcards.csv");
+        File csvOutputFile = new File("src\\main\\java\\com\\company\\resources\\standardcards.csv");
         String formattedStandardCard = convertToCsvFormat(standardCard);
 
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true))) {
@@ -97,7 +97,7 @@ public class CsvWriterService {
 
     public void writePremiumCardInCsv(PremiumCard premiumCard) throws FileNotFoundException
     {
-        File csvOutputFile = new File("src\\com\\company\\resources\\premiumcards.csv");
+        File csvOutputFile = new File("src\\main\\java\\com\\company\\resources\\premiumcards.csv");
         String formattedPremiumCard = convertToCsvFormat(premiumCard);
 
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true))) {

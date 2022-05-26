@@ -26,7 +26,7 @@ public class CsvReaderService {
         String splitBy = ",";
         try {
             //parsing a CSV file into BufferedReader class constructor
-            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\customers.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\com\\company\\resources\\customers.csv"));
             br.readLine(); // read header
             while ((line = br.readLine()) != null)
             //returns a Boolean value
@@ -48,7 +48,7 @@ public class CsvReaderService {
         String splitBy = ",";
         try {
             //parsing a CSV file into BufferedReader class constructor
-            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\admins.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\com\\company\\resources\\admins.csv"));
             br.readLine(); // read header
             while ((line = br.readLine()) != null)
             //returns a Boolean value
@@ -69,7 +69,7 @@ public class CsvReaderService {
         String splitBy = ",";
         try {
             //parsing a CSV file into BufferedReader class constructor
-            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\standardcards.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\com\\company\\resources\\standardcards.csv"));
             br.readLine(); // read header
             while ((line = br.readLine()) != null)
             //returns a Boolean value
@@ -91,7 +91,7 @@ public class CsvReaderService {
         String splitBy = ",";
         try {
             //parsing a CSV file into BufferedReader class constructor
-            BufferedReader br = new BufferedReader(new FileReader("src\\com\\company\\resources\\premiumcards.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\com\\company\\resources\\premiumcards.csv"));
             br.readLine(); // read header
             while ((line = br.readLine()) != null)
             //returns a Boolean value

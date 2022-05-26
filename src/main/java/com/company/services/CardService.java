@@ -3,6 +3,7 @@ package com.company.services;
 import com.company.cards.Card;
 import com.company.cards.PremiumCard;
 import com.company.cards.StandardCard;
+import com.company.repository.StandardCardsRepositoryUsingStatements;
 import com.company.user.Admin;
 import com.company.user.Customer;
 
@@ -18,6 +19,8 @@ public class CardService {
 
     CsvReaderService csvReaderService = CsvReaderService.getInstance();
     CsvWriterService csvWriterService = CsvWriterService.getInstance();
+
+    StandardCardsRepositoryUsingStatements standardCardsRepositoryUsingStatements = new StandardCardsRepositoryUsingStatements();
 
     public static CardService getInstance(){
         if(instance == null){
@@ -136,6 +139,8 @@ public class CardService {
 
         StandardCard newStandardCard = createStandardCard(uniqueId, String.valueOf(cardNumber), expirationDate, amount, withdrawFee);
         cards.add(newStandardCard);
+        standardCardsRepositoryUsingStatements.insertStandardCard(newStandardCard);
+
 
         // add to csv
         csvWriterService.writeStandardCardInCsv(newStandardCard);
